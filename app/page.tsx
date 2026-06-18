@@ -44,9 +44,9 @@ export default function Home() {
         
         {/* MOCK ADS */}
         <div className="w-full bg-[var(--color-brand-pink)] text-black border-4 border-white p-3 uppercase font-bold text-center flex flex-col items-center justify-center animate-pulse">
-          <span className="text-xs font-mono bg-black text-white px-2 py-1 mb-1">SPONSORED_SLOT</span>
+          <span className="text-xs font-mono bg-black text-white px-2 py-1 mb-1">ALERT_NOTIFICATION</span>
           <span className="text-lg">BACA KOMIK TANPA BATAS</span>
-          <span className="opacity-80 text-xs">KLIK DI SINI SEKARANG!</span>
+          <span className="opacity-80 text-xs">DEVELOPER AKBAR IQBNU PRAYOGA</span>
         </div>
 
         {/* SEARCH */}

@@ -64,7 +64,7 @@ function SearchContent() {
       {/* MOCK ADS */}
       <div className="w-full bg-[var(--color-brand-blue)] text-black border-4 border-white p-2 text-center flex items-center justify-center uppercase font-bold text-xs md:text-sm">
         <span className="font-mono bg-black text-white px-1 mr-2 text-[10px]">AD</span>
-        SUPPORT UYNOVEL, BELI COIN SEKARANG!
+        Akbar Iqbnu ❤️❤️ Nastiti Tri!
       </div>
 
       {loading ? (
