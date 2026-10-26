@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { 
   ArrowLeft, 
   Star, 
@@ -33,6 +32,8 @@ function DetailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const url = searchParams.get('url');
+  const thumbParam = searchParams.get('thumb');
+  const titleParam = searchParams.get('title');
 
   const [detail, setDetail] = useState<any>(null);
   const [episodes, setEpisodes] = useState<any[]>([]);
@@ -45,6 +46,7 @@ function DetailContent() {
   const [bookmarked, setBookmarked] = useState(false);
   const [lastRead, setLastRead] = useState<ReadingHistoryItem | null>(null);
   const [copied, setCopied] = useState(false);
+  const [imgErrorCount, setImgErrorCount] = useState(0);
 
   useEffect(() => {
     if (!url) return;
@@ -76,14 +78,14 @@ function DetailContent() {
   }, [url]);
 
   const handleBookmarkToggle = () => {
-    if (!detail || !url) return;
+    if (!url) return;
     const newState = toggleBookmark({
-      titleNo: detail.titleNo || 0,
-      title: detail.title || '',
+      titleNo: detail?.titleNo || 0,
+      title: detail?.title || titleParam || '',
       url,
-      thumbnail: detail.thumbnail || null,
-      author: detail.author || null,
-      genre: detail.genre || null,
+      thumbnail: detail?.thumbnail || thumbParam || null,
+      author: detail?.author || null,
+      genre: detail?.genre || null,
     });
     setBookmarked(newState);
   };
@@ -117,7 +119,7 @@ function DetailContent() {
   if (!url) {
     return (
       <div className="p-8 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-center">
-        <p className="text-sm text-[var(--text-secondary)]">Parameter URL tidak ditemukan.</p>
+        <p className="text-sm text-[#565D75] dark:text-[#B1B7CD]">Parameter URL tidak ditemukan.</p>
         <Link href="/" className="inline-block mt-4 text-xs font-semibold text-[#6659F5] hover:underline">
           Kembali ke Beranda
         </Link>
@@ -125,7 +127,7 @@ function DetailContent() {
     );
   }
 
-  if (loading) {
+  if (loading && !detail && !titleParam) {
     return (
       <div className="flex flex-col gap-8 animate-pulse">
         <div className="h-72 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-color)]" />
@@ -134,12 +136,12 @@ function DetailContent() {
     );
   }
 
-  if (error || !detail) {
+  if (error && !detail) {
     return (
       <div className="p-10 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-center flex flex-col items-center justify-center gap-3">
         <AlertCircle size={32} className="text-[#6659F5] dark:text-[#9188FF]" />
-        <h2 className="text-lg font-bold text-[var(--text-primary)]">Gagal Memuat Seri</h2>
-        <p className="text-xs text-[var(--text-secondary)] max-w-sm">{error || 'Data tidak tersedia.'}</p>
+        <h2 className="text-lg font-bold text-[#1F2238] dark:text-[#F5F6FF]">Gagal Memuat Seri</h2>
+        <p className="text-xs text-[#565D75] dark:text-[#B1B7CD] max-w-sm">{error || 'Data tidak tersedia.'}</p>
         <button
           onClick={() => window.location.reload()}
           className="mt-2 px-4 py-2 rounded-full bg-[#6659F5] text-white text-xs font-medium"
@@ -149,6 +151,19 @@ function DetailContent() {
       </div>
     );
   }
+
+  const displayTitle = detail?.title || titleParam || 'UYNovel Series';
+  const displaySynopsis = detail?.synopsis;
+  const displayAuthor = detail?.author;
+
+  // Determine cover URL with resilient fallback chain
+  const candidateCovers = [
+    detail?.thumbnail,
+    thumbParam,
+    episodes[0]?.thumbnail,
+  ].filter(Boolean) as string[];
+
+  const activeCoverSrc = candidateCovers[imgErrorCount] || null;
 
   const sortedEpisodes = [...episodes].sort((a, b) => {
     const noA = Number(a.episodeNo) || 0;
@@ -168,7 +183,7 @@ function DetailContent() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors py-1 cursor-pointer"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF] transition-colors py-1 cursor-pointer"
         >
           <ArrowLeft size={16} />
           <span>Kembali</span>
@@ -178,7 +193,7 @@ function DetailContent() {
           <button
             onClick={handleShare}
             aria-label="Bagikan link"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] text-xs text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF] transition-colors"
           >
             {copied ? <Check size={14} className="text-green-500" /> : <Share2 size={14} />}
             <span>{copied ? 'Tersalin' : 'Bagikan'}</span>
@@ -189,7 +204,7 @@ function DetailContent() {
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
               bookmarked
                 ? 'bg-[#EEECFF] dark:bg-[#1E233E] text-[#6659F5] dark:text-[#9188FF] border-[#C5BEFF]'
-                : 'bg-[var(--bg-surface)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                : 'bg-[var(--bg-surface)] border-[var(--border-color)] text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF]'
             }`}
           >
             {bookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
@@ -202,20 +217,25 @@ function DetailContent() {
       <div className="relative overflow-hidden rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-color)] p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col md:flex-row gap-6 sm:gap-8 items-center md:items-start">
           
-          {/* COVER */}
-          <div className="relative w-48 sm:w-56 aspect-[3/4] rounded-2xl overflow-hidden bg-[var(--bg-elevated)] shrink-0 shadow-md">
-            {detail.thumbnail ? (
-              <Image
-                src={`/api/image-proxy?url=${encodeURIComponent(detail.thumbnail)}`}
-                alt={detail.title || 'Cover'}
-                fill
-                unoptimized
-                priority
-                className="object-cover"
+          {/* COVER IMAGE */}
+          <div className="relative w-44 sm:w-56 aspect-[3/4] rounded-2xl overflow-hidden bg-[var(--bg-elevated)] shrink-0 shadow-md border border-[var(--border-color)]">
+            {activeCoverSrc ? (
+              <img
+                src={`/api/image-proxy?url=${encodeURIComponent(activeCoverSrc)}`}
+                alt={displayTitle}
+                onError={() => {
+                  if (imgErrorCount < candidateCovers.length - 1) {
+                    setImgErrorCount(prev => prev + 1);
+                  }
+                }}
+                className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <BookOpen size={48} className="text-[var(--text-muted)] opacity-30" />
+              <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                <BookOpen size={44} className="text-[#8E96AC] dark:text-[#7A829D] opacity-40 mb-2" />
+                <span className="text-xs font-medium text-[#8E96AC] dark:text-[#7A829D] line-clamp-2">
+                  {displayTitle}
+                </span>
               </div>
             )}
           </div>
@@ -224,54 +244,54 @@ function DetailContent() {
           <div className="flex flex-col flex-1 text-center md:text-left items-center md:items-start min-w-0">
             {/* BADGES */}
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              {detail.status && (
+              {detail?.status && (
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-[#EEECFF] dark:bg-[#1E233E] text-[#6659F5] dark:text-[#C5BEFF]">
                   {detail.status}
                 </span>
               )}
-              {detail.genre && (
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border-color)]">
+              {detail?.genre && (
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[var(--bg-elevated)] text-[#565D75] dark:text-[#B1B7CD] border border-[var(--border-color)]">
                   {detail.genre}
                 </span>
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight leading-tight mb-1">
-              {detail.title}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1F2238] dark:text-[#F5F6FF] tracking-tight leading-tight mb-1">
+              {displayTitle}
             </h1>
 
-            {detail.author && (
-              <p className="text-sm font-medium text-[var(--text-secondary)] mb-4">
-                Oleh <span className="text-[var(--text-primary)] font-semibold">{detail.author}</span>
+            {displayAuthor && (
+              <p className="text-sm font-medium text-[#565D75] dark:text-[#B1B7CD] mb-4">
+                Oleh <span className="text-[#1F2238] dark:text-[#F5F6FF] font-semibold">{displayAuthor}</span>
               </p>
             )}
 
             {/* METRICS BAR */}
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 py-2 px-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-xs text-[var(--text-secondary)] mb-4 w-fit">
-              {detail.rating && (
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 py-2 px-3 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-xs text-[#565D75] dark:text-[#B1B7CD] mb-4 w-fit">
+              {detail?.rating && (
                 <div className="flex items-center gap-1.5 font-semibold text-[#6659F5] dark:text-[#9188FF]">
                   <Star size={14} className="fill-current" />
                   <span>{detail.rating}</span>
                 </div>
               )}
-              {detail.subscribers && (
+              {detail?.subscribers && (
                 <div className="flex items-center gap-1.5">
-                  <Users size={14} className="text-[var(--text-muted)]" />
+                  <Users size={14} className="text-[#8E96AC] dark:text-[#7A829D]" />
                   <span>{detail.subscribers} Pembaca</span>
                 </div>
               )}
-              {detail.day && (
+              {detail?.day && (
                 <div className="flex items-center gap-1.5">
-                  <Clock size={14} className="text-[var(--text-muted)]" />
+                  <Clock size={14} className="text-[#8E96AC] dark:text-[#7A829D]" />
                   <span className="capitalize">{detail.day}</span>
                 </div>
               )}
             </div>
 
             {/* SYNOPSIS */}
-            {detail.synopsis && (
-              <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed mb-6 max-w-2xl">
-                {detail.synopsis}
+            {displaySynopsis && (
+              <p className="text-xs sm:text-sm text-[#565D75] dark:text-[#B1B7CD] leading-relaxed mb-6 max-w-2xl">
+                {displaySynopsis}
               </p>
             )}
 
@@ -279,7 +299,7 @@ function DetailContent() {
             {targetEpisode && (
               <div className="mt-auto pt-2 flex flex-wrap gap-3">
                 <Link
-                  href={`/read?url=${encodeURIComponent(targetEpisode.url)}&series=${encodeURIComponent(url)}&title=${encodeURIComponent(detail.title || '')}`}
+                  href={`/read?url=${encodeURIComponent(targetEpisode.url)}&series=${encodeURIComponent(url)}&title=${encodeURIComponent(displayTitle)}`}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#6659F5] hover:bg-[#5547E8] text-white font-semibold text-sm shadow-sm shadow-[#6659F5]/30 hover:shadow-md transition-all"
                 >
                   <Play size={16} fill="currentColor" />
@@ -297,17 +317,17 @@ function DetailContent() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
           <div className="flex items-baseline gap-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)]">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#1F2238] dark:text-[#F5F6FF]">
               Daftar Episode
             </h2>
-            <span className="text-xs text-[var(--text-muted)]">
+            <span className="text-xs text-[#8E96AC] dark:text-[#7A829D]">
               ({episodes.length} episode dimuat)
             </span>
           </div>
 
           <button
             onClick={() => setSortAsc(!sortAsc)}
-            className="inline-flex items-center gap-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-2.5 py-1 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF] px-2.5 py-1 rounded-lg hover:bg-[var(--bg-elevated)] transition-colors"
           >
             <ArrowUpDown size={14} />
             <span>{sortAsc ? 'Terlama ke Terbaru' : 'Terbaru ke Terlama'}</span>
@@ -321,7 +341,7 @@ function DetailContent() {
             return (
               <Link
                 key={ep.url || idx}
-                href={`/read?url=${encodeURIComponent(ep.url)}&series=${encodeURIComponent(url)}&title=${encodeURIComponent(detail.title || '')}`}
+                href={`/read?url=${encodeURIComponent(ep.url)}&series=${encodeURIComponent(url)}&title=${encodeURIComponent(displayTitle)}`}
                 className={`flex items-center gap-3.5 sm:gap-4 p-2.5 sm:p-3 rounded-2xl border transition-all duration-200 group ${
                   isLastReadEp
                     ? 'bg-[#EEECFF]/40 dark:bg-[#1E233E]/40 border-[#C5BEFF] dark:border-[#9188FF]/50'
@@ -331,16 +351,14 @@ function DetailContent() {
                 {/* THUMBNAIL */}
                 <div className="relative w-20 sm:w-28 aspect-video rounded-xl overflow-hidden bg-[var(--bg-elevated)] shrink-0">
                   {ep.thumbnail ? (
-                    <Image
+                    <img
                       src={`/api/image-proxy?url=${encodeURIComponent(ep.thumbnail)}`}
                       alt={ep.title || 'Episode'}
-                      fill
-                      unoptimized
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <BookOpen size={18} className="text-[var(--text-muted)] opacity-40" />
+                      <BookOpen size={18} className="text-[#8E96AC] dark:text-[#7A829D] opacity-40" />
                     </div>
                   )}
 
@@ -352,7 +370,7 @@ function DetailContent() {
                 {/* DETAILS */}
                 <div className="flex flex-col flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-xs sm:text-sm text-[var(--text-primary)] group-hover:text-[#6659F5] dark:group-hover:text-[#9188FF] transition-colors line-clamp-1">
+                    <h3 className="font-semibold text-xs sm:text-sm text-[#1F2238] dark:text-[#F5F6FF] group-hover:text-[#6659F5] dark:group-hover:text-[#9188FF] transition-colors line-clamp-1">
                       {ep.title}
                     </h3>
                     {isLastReadEp && (
@@ -362,10 +380,10 @@ function DetailContent() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3 text-xs text-[var(--text-muted)] mt-1">
+                  <div className="flex items-center gap-3 text-xs text-[#8E96AC] dark:text-[#7A829D] mt-1">
                     {ep.date && <span>{ep.date}</span>}
                     {ep.likes && (
-                      <div className="flex items-center gap-1 text-[var(--text-secondary)]">
+                      <div className="flex items-center gap-1 text-[#565D75] dark:text-[#B1B7CD]">
                         <Heart size={11} className="text-[#6659F5] dark:text-[#9188FF] fill-[#6659F5]/30 dark:fill-[#9188FF]/30" />
                         <span>{ep.likes}</span>
                       </div>
@@ -382,7 +400,7 @@ function DetailContent() {
           <button
             onClick={loadMore}
             disabled={loadingMore}
-            className="w-full py-3.5 mt-4 rounded-2xl bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] border border-[var(--border-color)] text-xs sm:text-sm font-semibold text-[var(--text-primary)] hover:border-[#6659F5] dark:hover:border-[#9188FF] transition-all disabled:opacity-50"
+            className="w-full py-3.5 mt-4 rounded-2xl bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] border border-[var(--border-color)] text-xs sm:text-sm font-semibold text-[#1F2238] dark:text-[#F5F6FF] hover:border-[#6659F5] dark:hover:border-[#9188FF] transition-all disabled:opacity-50"
           >
             {loadingMore ? 'Memuat Episode Lainnya...' : 'Muat Lebih Banyak Episode'}
           </button>

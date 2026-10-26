@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { History, Play, ArrowRight, BookOpen } from 'lucide-react';
+import { History, Play, BookOpen } from 'lucide-react';
 import { getReadingHistory, ReadingHistoryItem } from '@/lib/storage';
 
 export function ContinueReadingSection() {
@@ -21,7 +20,7 @@ export function ContinueReadingSection() {
   }, []);
 
   if (!mounted || history.length === 0) {
-    return null; // Don't show fake info if no actual history exists
+    return null;
   }
 
   return (
@@ -32,10 +31,10 @@ export function ContinueReadingSection() {
             <History size={18} />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)]">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#1F2238] dark:text-[#F5F6FF]">
               Lanjutkan Membaca
             </h2>
-            <p className="text-xs text-[var(--text-secondary)]">
+            <p className="text-xs text-[#565D75] dark:text-[#B1B7CD]">
               Cerita yang baru saja Anda baca sebelumnya
             </p>
           </div>
@@ -51,16 +50,14 @@ export function ContinueReadingSection() {
             {/* THUMB */}
             <div className="relative w-16 h-20 rounded-xl overflow-hidden bg-[var(--bg-elevated)] shrink-0">
               {item.thumbnail ? (
-                <Image
+                <img
                   src={`/api/image-proxy?url=${encodeURIComponent(item.thumbnail)}`}
                   alt={item.title}
-                  fill
-                  unoptimized
-                  className="object-cover group-hover:scale-105 transition-transform"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <BookOpen size={20} className="text-[var(--text-muted)] opacity-50" />
+                  <BookOpen size={20} className="text-[#8E96AC] dark:text-[#7A829D] opacity-50" />
                 </div>
               )}
             </div>
@@ -70,10 +67,10 @@ export function ContinueReadingSection() {
               <span className="text-[11px] font-semibold text-[#6659F5] dark:text-[#9188FF] uppercase tracking-wider">
                 Bab #{item.episodeNo}
               </span>
-              <h3 className="font-semibold text-sm text-[var(--text-primary)] line-clamp-1 group-hover:text-[#6659F5] dark:group-hover:text-[#9188FF] transition-colors">
+              <h3 className="font-semibold text-sm text-[#1F2238] dark:text-[#F5F6FF] line-clamp-1 group-hover:text-[#6659F5] dark:group-hover:text-[#9188FF] transition-colors">
                 {item.title}
               </h3>
-              <p className="text-xs text-[var(--text-muted)] line-clamp-1 mt-0.5">
+              <p className="text-xs text-[#8E96AC] dark:text-[#7A829D] line-clamp-1 mt-0.5">
                 {item.episodeTitle || `Episode ${item.episodeNo}`}
               </p>
 

@@ -12,6 +12,22 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+function applyThemeToDOM(t: Theme) {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  if (t === 'dark') {
+    root.classList.add('dark');
+    root.classList.remove('light');
+    root.setAttribute('data-theme', 'dark');
+    root.style.colorScheme = 'dark';
+  } else {
+    root.classList.remove('dark');
+    root.classList.add('light');
+    root.setAttribute('data-theme', 'light');
+    root.style.colorScheme = 'light';
+  }
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
@@ -22,17 +38,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const savedTheme = localStorage.getItem('uynovel-theme') as Theme | null;
       if (savedTheme === 'light' || savedTheme === 'dark') {
         setThemeState(savedTheme);
-        document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+        applyThemeToDOM(savedTheme);
       } else {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const initialTheme: Theme = prefersDark ? 'dark' : 'light';
         setThemeState(initialTheme);
-        document.documentElement.classList.toggle('dark', prefersDark);
+        applyThemeToDOM(initialTheme);
       }
     } catch (e) {
-      // Fallback to dark if localStorage fails
       setThemeState('dark');
-      document.documentElement.classList.add('dark');
+      applyThemeToDOM('dark');
     }
   }, []);
 
@@ -41,18 +56,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.setItem('uynovel-theme', newTheme);
     } catch (e) {}
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    applyThemeToDOM(newTheme);
   };
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
   };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
-      <div className={mounted ? '' : 'dark'}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   );
 }

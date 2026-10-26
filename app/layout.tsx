@@ -46,11 +46,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html 
       lang="id" 
-      className={`${plusJakarta.variable} ${manrope.variable} ${literata.variable} dark`}
+      className={`${plusJakarta.variable} ${manrope.variable} ${literata.variable}`}
       suppressHydrationWarning
     >
       <head>
         <link rel="apple-touch-icon" href="/icon.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('uynovel-theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var theme = saved ? saved : (prefersDark ? 'dark' : 'light');
+                  var root = document.documentElement;
+                  if (theme === 'dark') {
+                    root.classList.add('dark');
+                    root.classList.remove('light');
+                    root.setAttribute('data-theme', 'dark');
+                    root.style.colorScheme = 'dark';
+                  } else {
+                    root.classList.remove('dark');
+                    root.classList.add('light');
+                    root.setAttribute('data-theme', 'light');
+                    root.style.colorScheme = 'light';
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body className="antialiased selection:bg-[#6659F5]/20 selection:text-[#6659F5] dark:selection:bg-[#9188FF]/30 dark:selection:text-[#C5BEFF]">
         <ThemeProvider>

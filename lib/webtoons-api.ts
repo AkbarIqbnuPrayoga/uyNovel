@@ -4,6 +4,15 @@ import * as cheerio from "cheerio";
 const WEBTOONS_BASE = "https://www.webtoons.com";
 const CORS_PROXY = "https://cors.siputzx.my.id/";
 
+const normalizeImageUrl = (src?: string | null): string | null => {
+  if (!src) return null;
+  let url = src.trim();
+  if (url.startsWith("//")) {
+    url = `https:${url}`;
+  }
+  return url;
+};
+
 const fetchHtml = async (path: string) => {
   let url = path.startsWith('http') ? path : `${WEBTOONS_BASE}${path}`;
   url = `${CORS_PROXY}${url}`;
@@ -51,7 +60,7 @@ export const searchWebtoons = async (query: string, limit: number = 20) => {
       $a.attr("title")?.trim() || "";
     const author =
       $a.find(".info_text .author, div.author, .author, .by").first().text().trim();
-    const thumb = $a.find("img").first().attr("src") ?? null;
+    const thumb = normalizeImageUrl($a.find("img").first().attr("src") ?? null);
     const isCanvas = absUrl.includes("/canvas/");
     const genreMatch = absUrl.match(/\/id\/([^/]+)\/[^/]+\/list/);
     const genre = !isCanvas && genreMatch ? genreMatch[1] : null;
@@ -90,8 +99,14 @@ export const parseDetail = ($: cheerio.CheerioAPI, sourceUrl: string) => {
   const ratingText = $("em#_starScoreAverage, .grade_area .grade_num").first().text().trim() || null;
   const rating = ratingText ? parseFloat(ratingText) || null : null;
   const subscribers = $(".grade_area em.cnt, .subscribe em.cnt").first().text().trim() || null;
-  const thumbnail = $(".detail_header .thmb img, .detail_bg img").first().attr("src") ||
-    $('meta[property="og:image"]').attr("content") || null;
+  
+  // Prioritize official poster og:image, twitter:image, then fallback to DOM images
+  const rawThumbnail = 
+    $('meta[property="og:image"]').attr("content") ||
+    $('meta[name="twitter:image"]').attr("content") ||
+    $(".detail_header .thmb img, span.thmb img, .info .thmb img, .detail_bg img, .pic img").first().attr("src") ||
+    null;
+  const thumbnail = normalizeImageUrl(rawThumbnail);
   
   return {
     titleNo: titleNoFromUrl(sourceUrl),
@@ -120,7 +135,8 @@ export const getEpisodes = async (url: string, page = 1) => {
     const epUrl = href.startsWith("http") ? href : `${WEBTOONS_BASE}${href}`;
     const epNo = Number($li.attr("data-episode-no")) || Number(epUrl.match(/episode_no=(\d+)/)?.[1]) || null;
     const epTitle = $a.find(".subj span, .subj").first().text().trim() || $a.attr("title")?.trim() || "";
-    const thumb = $a.find(".thmb img").first().attr("src") ?? null;
+    const rawThumb = $a.find(".thmb img").first().attr("src") ?? null;
+    const thumb = normalizeImageUrl(rawThumb);
     const date = $a.find(".date").first().text().trim() || null;
     const likes = $li.find("em._likeitNumViewArea, .like_area em").first().text().trim() || null;
     list.push({ episodeNo: epNo, title: epTitle, thumbnail: thumb, date, likes, url: epUrl });
@@ -133,6 +149,11 @@ export const getEpisodes = async (url: string, page = 1) => {
   });
   
   const meta = parseDetail($, url);
+  // Fallback to first episode thumbnail if series thumbnail was missing
+  if (!meta.thumbnail && list.length > 0 && list[0].thumbnail) {
+    meta.thumbnail = list[0].thumbnail;
+  }
+
   return { ...meta, page, totalPages, hasNext: page < totalPages, count: list.length, episodesList: list };
 };
 
@@ -154,7 +175,8 @@ export const getTrending = async (day: string) => {
     const titleNo = titleNoFromUrl(absUrl);
     if (!titleNo) return;
     const title = $a.find(".subj, p.subj").first().text().trim() || $a.attr("title")?.trim() || "";
-    const thumb = $a.find("img").first().attr("src") ?? null;
+    const rawThumb = $a.find("img").first().attr("src") ?? null;
+    const thumb = normalizeImageUrl(rawThumb);
     const genreMatch = absUrl.match(/\/id\/([^/]+)\/[^/]+\/list/);
     const genre = genreMatch && genreMatch[1] !== "canvas" ? genreMatch[1] : null;
     const likes = $a.find(".grade_area em, .like_area em, .grade_num").first().text().trim() || null;
@@ -181,7 +203,8 @@ export const getEpisodeImages = async (url: string) => {
   
   $("#_imageList img").each((_, el) => {
     const src = $(el).attr("data-url") || $(el).attr("src");
-    if (src) images.push(src);
+    const normalized = normalizeImageUrl(src);
+    if (normalized) images.push(normalized);
   });
   
   return images;

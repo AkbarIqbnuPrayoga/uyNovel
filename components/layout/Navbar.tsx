@@ -62,7 +62,7 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-[var(--bg-main)]/85 border-b border-[var(--border-color)] transition-colors duration-200">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-[var(--bg-surface)]/90 border-b border-[var(--border-color)] transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
         
         {/* LOGO */}
@@ -75,18 +75,18 @@ export function Navbar() {
           </div>
           <div className="flex flex-col">
             <div className="flex items-baseline gap-0.5">
-              <span className="text-xl font-extrabold tracking-tight text-[#242447] dark:text-[#F5F6FF]">
+              <span className="text-xl font-extrabold tracking-tight text-[#1F2238] dark:text-[#F5F6FF]">
                 UY<span className="text-[#6659F5] dark:text-[#9188FF]">Novel</span>
               </span>
             </div>
-            <span className="text-[10px] uppercase font-medium tracking-wider text-[var(--text-muted)] -mt-1">
+            <span className="text-[10px] uppercase font-semibold tracking-wider text-[#8E96AC] dark:text-[#7A829D] -mt-1">
               Digital Editorial
             </span>
           </div>
         </Link>
 
         {/* DESKTOP NAV LINKS */}
-        <nav className="hidden md:flex items-center gap-1 bg-[var(--bg-surface)] px-2 py-1.5 rounded-full border border-[var(--border-color)] shadow-xs">
+        <nav className="hidden md:flex items-center gap-1 bg-[var(--bg-main)] px-2 py-1.5 rounded-full border border-[var(--border-color)] shadow-xs">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             const Icon = link.icon;
@@ -94,10 +94,10 @@ export function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
                   isActive
                     ? 'bg-[#6659F5] text-white shadow-sm dark:bg-[#9188FF] dark:text-[#101221]'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]'
+                    : 'text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF] hover:bg-[#EEECFF] dark:hover:bg-[#222741]'
                 }`}
               >
                 <Icon size={15} />
@@ -110,16 +110,16 @@ export function Navbar() {
         {/* RIGHT CONTROLS */}
         <div className="flex items-center gap-2 sm:gap-3">
           
-          {/* Quick Search Button / Input */}
+          {/* Quick Search Button */}
           <button
             onClick={() => setSearchOpen(true)}
             aria-label="Cari webtoon atau manga"
-            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-muted)] hover:border-[#6659F5] dark:hover:border-[#9188FF] hover:text-[var(--text-primary)] transition-all text-xs"
+            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--bg-main)] border border-[var(--border-color)] text-[#565D75] dark:text-[#B1B7CD] hover:border-[#6659F5] dark:hover:border-[#9188FF] hover:text-[#1F2238] dark:hover:text-[#F5F6FF] transition-all text-xs"
           >
             <Search size={14} className="text-[#6659F5] dark:text-[#9188FF]" />
             <span className="hidden lg:inline">Cari judul webtoon...</span>
             <span className="lg:hidden">Cari...</span>
-            <kbd className="hidden lg:inline-block ml-2 px-1.5 py-0.5 text-[10px] font-semibold bg-[var(--bg-elevated)] text-[var(--text-secondary)] rounded border border-[var(--border-color)]">
+            <kbd className="hidden lg:inline-block ml-2 px-1.5 py-0.5 text-[10px] font-semibold bg-[var(--bg-surface)] text-[#565D75] dark:text-[#B1B7CD] rounded border border-[var(--border-color)]">
               /
             </kbd>
           </button>
@@ -128,7 +128,7 @@ export function Navbar() {
           <button
             onClick={() => setSearchOpen(true)}
             aria-label="Cari judul"
-            className="sm:hidden p-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[#6659F5] transition-colors"
+            className="sm:hidden p-2.5 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-[#565D75] dark:text-[#B1B7CD] hover:text-[#6659F5] transition-colors"
           >
             <Search size={18} />
           </button>
@@ -138,7 +138,7 @@ export function Navbar() {
             onClick={toggleTheme}
             aria-label={`Ganti ke tema ${theme === 'dark' ? 'terang' : 'gelap'}`}
             title={`Ganti ke tema ${theme === 'dark' ? 'terang' : 'gelap'}`}
-            className="p-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[#6659F5] dark:hover:text-[#9188FF] hover:bg-[var(--bg-elevated)] transition-all cursor-pointer"
+            className="p-2.5 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-[#565D75] dark:text-[#C5BEFF] hover:text-[#6659F5] dark:hover:text-[#9188FF] hover:bg-[#EEECFF] dark:hover:bg-[#222741] transition-all cursor-pointer"
           >
             {theme === 'dark' ? (
               <Sun size={18} className="text-[#C5BEFF]" />
@@ -151,7 +151,7 @@ export function Navbar() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Menu navigasi"
-            className="md:hidden p-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            className="md:hidden p-2.5 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-[#1F2238] dark:text-[#F5F6FF] hover:text-[#6659F5] transition-colors"
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -173,13 +173,13 @@ export function Navbar() {
                 placeholder="Cari webtoon, manga, atau judul cerita..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent text-[var(--text-primary)] placeholder-[var(--text-muted)] text-base outline-none"
+                className="w-full bg-transparent text-[#1F2238] dark:text-[#F5F6FF] placeholder-[#8E96AC] dark:placeholder-[#7A829D] text-base outline-none"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] px-2 py-1"
+                  className="text-xs text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF] px-2 py-1"
                 >
                   Clear
                 </button>
@@ -187,13 +187,13 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={() => setSearchOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-[var(--bg-elevated)] text-[var(--text-muted)]"
+                className="p-1.5 rounded-lg hover:bg-[var(--bg-elevated)] text-[#565D75] dark:text-[#B1B7CD]"
               >
                 <X size={18} />
               </button>
             </form>
 
-            <div className="pt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+            <div className="pt-3 flex flex-wrap items-center gap-2 text-xs text-[#565D75] dark:text-[#B1B7CD]">
               <span>Saran pencarian:</span>
               {['Tower of God', 'Omniscient Reader', 'Lookism', 'Eleceed'].map((item) => (
                 <button
@@ -217,14 +217,14 @@ export function Navbar() {
       {/* MOBILE MENU DRAWER */}
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-[var(--border-color)] bg-[var(--bg-surface)] px-4 py-4 flex flex-col gap-3 shadow-lg animate-in slide-in-from-top-2">
-          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)]">
+          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)]">
             <Search size={16} className="text-[#6659F5] dark:text-[#9188FF]" />
             <input
               type="text"
               placeholder="Cari judul..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent text-sm w-full outline-none text-[var(--text-primary)] placeholder-[var(--text-muted)]"
+              className="bg-transparent text-sm w-full outline-none text-[#1F2238] dark:text-[#F5F6FF] placeholder-[#8E96AC] dark:placeholder-[#7A829D]"
             />
           </form>
 
@@ -237,10 +237,10 @@ export function Navbar() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                     isActive
                       ? 'bg-[#6659F5] text-white dark:bg-[#9188FF] dark:text-[#101221]'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]'
+                      : 'text-[#565D75] dark:text-[#B1B7CD] hover:bg-[var(--bg-elevated)]'
                   }`}
                 >
                   <Icon size={18} />
@@ -250,7 +250,7 @@ export function Navbar() {
             })}
           </div>
 
-          <div className="pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-xs text-[var(--text-muted)]">
+          <div className="pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-xs text-[#8E96AC] dark:text-[#7A829D]">
             <span>{bookmarkCount} Disimpan</span>
             <span>{historyCount} Riwayat Baca</span>
           </div>

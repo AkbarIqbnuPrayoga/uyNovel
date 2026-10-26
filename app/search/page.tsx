@@ -87,17 +87,17 @@ function SearchContent() {
     <div className="flex flex-col gap-8">
       {/* HEADER & SEARCH FORM */}
       <div className="flex flex-col gap-3">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1F2238] dark:text-[#F5F6FF] tracking-tight">
           Jelajahi Cerita
         </h1>
-        <p className="text-sm text-[var(--text-secondary)]">
+        <p className="text-sm text-[#565D75] dark:text-[#B1B7CD]">
           Cari judul webtoon, komik, atau temukan cerita baru dari kreator favorit Anda.
         </p>
 
         {/* SEARCH BAR */}
         <form onSubmit={handleSearchSubmit} className="relative mt-2">
           <div className="relative flex items-center w-full bg-[var(--bg-surface)] rounded-2xl border border-[var(--border-color)] shadow-xs focus-within:border-[#6659F5] dark:focus-within:border-[#9188FF] focus-within:ring-2 focus-within:ring-[#6659F5]/20 transition-all p-1.5 sm:p-2">
-            <div className="pl-3 text-[var(--text-muted)]">
+            <div className="pl-3 text-[#8E96AC] dark:text-[#7A829D]">
               <SearchIcon size={20} className="text-[#6659F5] dark:text-[#9188FF]" />
             </div>
             
@@ -106,7 +106,7 @@ function SearchContent() {
               placeholder="Ketik judul webtoon atau kreator..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full bg-transparent px-3 py-2 text-sm sm:text-base text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none"
+              className="w-full bg-transparent px-3 py-2 text-sm sm:text-base text-[#1F2238] dark:text-[#F5F6FF] placeholder-[#8E96AC] dark:placeholder-[#7A829D] outline-none"
               autoFocus={!initialQ}
             />
 
@@ -114,7 +114,7 @@ function SearchContent() {
               <button
                 type="button"
                 onClick={handleClear}
-                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors mr-1"
+                className="p-1.5 rounded-lg text-[#8E96AC] hover:text-[#1F2238] dark:hover:text-[#F5F6FF] hover:bg-[var(--bg-elevated)] transition-colors mr-1"
                 aria-label="Bersihkan pencarian"
               >
                 <X size={16} />
@@ -134,9 +134,9 @@ function SearchContent() {
       {/* FILTER TABS & COUNT (WHEN SEARCHED) */}
       {results && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
-          <div className="text-sm text-[var(--text-secondary)]">
+          <div className="text-sm text-[#565D75] dark:text-[#B1B7CD]">
             Ditemukan{' '}
-            <span className="font-bold text-[var(--text-primary)]">
+            <span className="font-bold text-[#1F2238] dark:text-[#F5F6FF]">
               {displayedItems.length}
             </span>{' '}
             judul untuk &ldquo;{results.query}&rdquo;
@@ -145,10 +145,10 @@ function SearchContent() {
           <div className="flex items-center gap-1.5 bg-[var(--bg-surface)] p-1 rounded-xl border border-[var(--border-color)] self-start sm:self-auto">
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
                 activeTab === 'all'
                   ? 'bg-[#6659F5] text-white dark:bg-[#9188FF] dark:text-[#101221]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  : 'text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF]'
               }`}
             >
               Semua ({results.items?.length || 0})
@@ -156,10 +156,10 @@ function SearchContent() {
 
             <button
               onClick={() => setActiveTab('originals')}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
                 activeTab === 'originals'
                   ? 'bg-[#6659F5] text-white dark:bg-[#9188FF] dark:text-[#101221]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  : 'text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF]'
               }`}
             >
               Originals ({results.originals?.length || 0})
@@ -167,10 +167,10 @@ function SearchContent() {
 
             <button
               onClick={() => setActiveTab('canvas')}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
                 activeTab === 'canvas'
                   ? 'bg-[#6659F5] text-white dark:bg-[#9188FF] dark:text-[#101221]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  : 'text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF]'
               }`}
             >
               Canvas ({results.canvas?.length || 0})
@@ -198,7 +198,7 @@ function SearchContent() {
       ) : error ? (
         <div className="p-8 sm:p-12 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-center flex flex-col items-center justify-center gap-3">
           <AlertCircle size={32} className="text-[#6659F5] dark:text-[#9188FF]" />
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">{error}</h3>
+          <h3 className="text-base font-semibold text-[#1F2238] dark:text-[#F5F6FF]">{error}</h3>
           <button
             onClick={() => fetchResults(query)}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#6659F5] text-white text-xs font-medium hover:bg-[#5547E8] transition-colors"
@@ -209,10 +209,10 @@ function SearchContent() {
         </div>
       ) : results && displayedItems.length === 0 ? (
         <div className="p-8 sm:p-12 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-center flex flex-col items-center justify-center gap-3">
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">
+          <h3 className="text-base font-semibold text-[#1F2238] dark:text-[#F5F6FF]">
             Tidak ada judul yang cocok
           </h3>
-          <p className="text-xs text-[var(--text-secondary)] max-w-sm">
+          <p className="text-xs text-[#565D75] dark:text-[#B1B7CD] max-w-sm">
             Kami tidak menemukan hasil untuk &ldquo;{query}&rdquo;. Silakan coba dengan kata kunci lain atau pilih saran populer di bawah.
           </p>
           <button
@@ -240,7 +240,7 @@ function SearchContent() {
       ) : (
         /* IDLE STATE: SUGGESTIONS */
         <div className="flex flex-col gap-6 py-4">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+          <div className="flex items-center gap-2 text-sm font-semibold text-[#1F2238] dark:text-[#F5F6FF]">
             <Sparkles size={16} className="text-[#6659F5] dark:text-[#9188FF]" />
             <span>Pencarian Populer Rekomendasi</span>
           </div>
@@ -254,7 +254,7 @@ function SearchContent() {
                   router.push(`/search?q=${encodeURIComponent(term)}`);
                   fetchResults(term);
                 }}
-                className="px-4 py-2 rounded-xl bg-[var(--bg-surface)] hover:bg-[#EEECFF] dark:hover:bg-[#1E233E] text-[var(--text-secondary)] hover:text-[#6659F5] dark:hover:text-[#9188FF] border border-[var(--border-color)] hover:border-[#C5BEFF] text-xs font-medium transition-all"
+                className="px-4 py-2 rounded-xl bg-[var(--bg-surface)] hover:bg-[#EEECFF] dark:hover:bg-[#1E233E] text-[#565D75] dark:text-[#B1B7CD] hover:text-[#6659F5] dark:hover:text-[#9188FF] border border-[var(--border-color)] hover:border-[#6659F5] text-xs font-semibold transition-all"
               >
                 {term}
               </button>

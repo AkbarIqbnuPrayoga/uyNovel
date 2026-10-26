@@ -55,11 +55,11 @@ export function TrendingSection() {
             <div className="p-1.5 rounded-lg bg-[#EEECFF] dark:bg-[#1E233E] text-[#6659F5] dark:text-[#9188FF]">
               <Flame size={18} />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1F2238] dark:text-[#F5F6FF] tracking-tight">
               Trending Sekarang
             </h2>
           </div>
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-sm text-[#565D75] dark:text-[#B1B7CD]">
             Koleksi cerita terpopuler yang sedang banyak dibaca saat ini.
           </p>
         </div>
@@ -72,10 +72,10 @@ export function TrendingSection() {
               <button
                 key={tab.id}
                 onClick={() => setActiveFilter(tab.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
                     ? 'bg-[#6659F5] text-white shadow-xs dark:bg-[#9188FF] dark:text-[#101221]'
-                    : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] border border-[var(--border-color)]'
+                    : 'bg-[var(--bg-surface)] text-[#565D75] dark:text-[#B1B7CD] hover:text-[#1F2238] dark:hover:text-[#F5F6FF] hover:bg-[#EEECFF] dark:hover:bg-[#222741] border border-[var(--border-color)]'
                 }`}
               >
                 {tab.label}
@@ -104,10 +104,10 @@ export function TrendingSection() {
       ) : error ? (
         <div className="p-8 sm:p-12 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-center flex flex-col items-center justify-center gap-3">
           <AlertCircle size={32} className="text-[#6659F5] dark:text-[#9188FF] opacity-80" />
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">
+          <h3 className="text-base font-semibold text-[#1F2238] dark:text-[#F5F6FF]">
             Belum dapat memuat trending
           </h3>
-          <p className="text-xs text-[var(--text-secondary)] max-w-sm">
+          <p className="text-xs text-[#565D75] dark:text-[#B1B7CD] max-w-sm">
             {error} Silakan periksa koneksi internet Anda atau coba muat ulang.
           </p>
           <button
@@ -120,10 +120,10 @@ export function TrendingSection() {
         </div>
       ) : items.length === 0 ? (
         <div className="p-8 sm:p-12 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-center flex flex-col items-center justify-center gap-2">
-          <p className="text-sm font-medium text-[var(--text-primary)]">
+          <p className="text-sm font-medium text-[#1F2238] dark:text-[#F5F6FF]">
             Tidak ada cerita trending untuk kategori ini.
           </p>
-          <p className="text-xs text-[var(--text-secondary)] max-w-sm">
+          <p className="text-xs text-[#565D75] dark:text-[#B1B7CD] max-w-sm">
             Coba pilih hari lain atau gunakan fitur pencarian untuk menemukan judul favorit Anda.
           </p>
         </div>

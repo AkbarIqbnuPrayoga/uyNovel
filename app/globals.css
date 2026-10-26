@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
-  :root {
+  :root,
+  html.light,
+  [data-theme="light"] {
     --bg-main: #F7F8FC;
     --bg-surface: #FFFFFF;
-    --bg-elevated: #F0F2FA;
-    --text-primary: #242447;
-    --text-secondary: #687086;
-    --text-muted: #959DB0;
+    --bg-elevated: #EEECFF;
+    --text-primary: #1F2238;
+    --text-secondary: #565D75;
+    --text-muted: #8E96AC;
     --accent-indigo: #6659F5;
     --accent-indigo-hover: #5547E8;
     --accent-lavender: #C5BEFF;
     --accent-pale-lavender: #EEECFF;
-    --border-color: #E5E7F0;
-    --border-subtle: #EEF0F6;
+    --border-color: #E2E5F0;
+    --border-subtle: #ECEFF8;
     --accent-mint: #059669;
     --accent-mint-bg: #E6F7F0;
-    --card-shadow: 0 4px 20px -2px rgba(36, 36, 71, 0.05);
+    --card-shadow: 0 4px 20px -2px rgba(31, 34, 56, 0.06);
     --card-shadow-hover: 0 10px 25px -3px rgba(102, 89, 245, 0.12);
   }
 
-  .dark {
+  html.dark,
+  :root.dark,
+  .dark,
+  [data-theme="dark"] {
     --bg-main: #101221;
     --bg-surface: #191D32;
     --bg-elevated: #222741;
@@ -47,8 +54,9 @@
     background-color: var(--bg-main);
     color: var(--text-primary);
     font-family: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     overflow-x: hidden;
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
