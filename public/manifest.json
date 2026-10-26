@@ -1,11 +1,11 @@
 {
-  "name": "NovelFliy",
-  "short_name": "NovelFliy",
-  "description": "Brutalist Webtoon Reader",
+  "name": "UYNovel",
+  "short_name": "UYNovel",
+  "description": "Modern Minimalist Novel & Webtoon Discovery and Reading Platform",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#101221",
+  "theme_color": "#101221",
   "icons": [
     {
       "src": "/icon.png",

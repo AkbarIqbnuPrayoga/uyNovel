@@ -1,17 +1,85 @@
 @import "tailwindcss";
 
-@theme {
-  --font-space: var(--font-space), "Space Grotesk", sans-serif;
-  --font-mono: var(--font-mono), "JetBrains Mono", monospace;
-  
-  --color-brand-green: #ccff00;
-  --color-brand-pink: #ff00ff;
-  --color-brand-blue: #00ffff;
-  --color-brand-orange: #ff4500;
-}
-
 @layer base {
   :root {
-    --accent: #ccff00;
+    --bg-main: #F7F8FC;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #F0F2FA;
+    --text-primary: #242447;
+    --text-secondary: #687086;
+    --text-muted: #959DB0;
+    --accent-indigo: #6659F5;
+    --accent-indigo-hover: #5547E8;
+    --accent-lavender: #C5BEFF;
+    --accent-pale-lavender: #EEECFF;
+    --border-color: #E5E7F0;
+    --border-subtle: #EEF0F6;
+    --accent-mint: #059669;
+    --accent-mint-bg: #E6F7F0;
+    --card-shadow: 0 4px 20px -2px rgba(36, 36, 71, 0.05);
+    --card-shadow-hover: 0 10px 25px -3px rgba(102, 89, 245, 0.12);
   }
+
+  .dark {
+    --bg-main: #101221;
+    --bg-surface: #191D32;
+    --bg-elevated: #222741;
+    --text-primary: #F5F6FF;
+    --text-secondary: #B1B7CD;
+    --text-muted: #7A829D;
+    --accent-indigo: #9188FF;
+    --accent-indigo-hover: #7E74FF;
+    --accent-lavender: #C5BEFF;
+    --accent-pale-lavender: #1E233E;
+    --border-color: #303650;
+    --border-subtle: #242A42;
+    --accent-mint: #34D399;
+    --accent-mint-bg: #132E27;
+    --card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4);
+    --card-shadow-hover: 0 12px 32px -4px rgba(145, 136, 255, 0.15);
+  }
+
+  * {
+    border-color: var(--border-color);
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-manrope), var(--font-jakarta), sans-serif;
+  }
+}
+
+/* Custom Scrollbar for sleek aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Hide scrollbar for tabs/carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -1,151 +1,291 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { Search as SearchIcon, ArrowLeft } from 'lucide-react';
-import Image from 'next/image';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Search as SearchIcon, X, Filter, Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
+import { MobileNav } from '@/components/layout/MobileNav';
+import { SeriesCard } from '@/components/series/SeriesCard';
+
+const SUGGESTED_SEARCHES = [
+  'Tower of God',
+  'Omniscient Reader',
+  'Lookism',
+  'Eleceed',
+  'Wind Breaker',
+  'Viral Hit',
+  'The Boxer',
+  'Sweet Home',
+];
 
 function SearchContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialQ = searchParams.get('q') || '';
+  
   const [query, setQuery] = useState(initialQ);
+  const [activeTab, setActiveTab] = useState<'all' | 'originals' | 'canvas'>('all');
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(!!initialQ);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchResults = (q: string) => {
-    if (!q) return;
+    if (!q.trim()) {
+      setResults(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    fetch(`/api/search?q=${encodeURIComponent(q)}`)
-      .then(res => res.json())
-      .then(data => {
+    setError(null);
+    fetch(`/api/search?q=${encodeURIComponent(q.trim())}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Gagal mengambil hasil pencarian');
+        return res.json();
+      })
+      .then((data) => {
         setResults(data);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
+        setError('Terjadi kendala saat mencari cerita.');
         setLoading(false);
       });
   };
 
   useEffect(() => {
+    setQuery(initialQ);
     if (initialQ) {
       fetchResults(initialQ);
     }
   }, [initialQ]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if(query.trim()) {
-      window.history.replaceState({}, '', `/search?q=${encodeURIComponent(query)}`);
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
       fetchResults(query);
     }
   };
 
-  return (
-    <div className="flex flex-col gap-6">
-      <form onSubmit={handleSearch} className="flex border-4 border-white bg-black focus-within:border-[var(--color-brand-blue)] transition-colors">
-        <input 
-          type="text" 
-          placeholder="SEARCH QUERY..." 
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="w-full bg-transparent text-white font-mono p-4 outline-none placeholder:text-gray-600"
-          autoFocus={!initialQ}
-        />
-        <button 
-          type="submit"
-          className="p-4 bg-white text-black flex items-center justify-center hover:bg-[var(--color-brand-blue)] transition-colors"
-        >
-          <SearchIcon size={24} className="font-bold" />
-        </button>
-      </form>
+  const handleClear = () => {
+    setQuery('');
+    setResults(null);
+    router.push('/search');
+  };
 
-      {/* MOCK ADS */}
-      <div className="w-full bg-[var(--color-brand-blue)] text-black border-4 border-white p-2 text-center flex items-center justify-center uppercase font-bold text-xs md:text-sm">
-        <span className="font-mono bg-black text-white px-1 mr-2 text-[10px]">AD</span>
-        Akbar Iqbnu ❤️❤️ Nastiti Tri!
+  const displayedItems = results
+    ? activeTab === 'all'
+      ? results.items || []
+      : activeTab === 'originals'
+      ? results.originals || []
+      : results.canvas || []
+    : [];
+
+  return (
+    <div className="flex flex-col gap-8">
+      {/* HEADER & SEARCH FORM */}
+      <div className="flex flex-col gap-3">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight">
+          Jelajahi Cerita
+        </h1>
+        <p className="text-sm text-[var(--text-secondary)]">
+          Cari judul webtoon, komik, atau temukan cerita baru dari kreator favorit Anda.
+        </p>
+
+        {/* SEARCH BAR */}
+        <form onSubmit={handleSearchSubmit} className="relative mt-2">
+          <div className="relative flex items-center w-full bg-[var(--bg-surface)] rounded-2xl border border-[var(--border-color)] shadow-xs focus-within:border-[#6659F5] dark:focus-within:border-[#9188FF] focus-within:ring-2 focus-within:ring-[#6659F5]/20 transition-all p-1.5 sm:p-2">
+            <div className="pl-3 text-[var(--text-muted)]">
+              <SearchIcon size={20} className="text-[#6659F5] dark:text-[#9188FF]" />
+            </div>
+            
+            <input
+              type="text"
+              placeholder="Ketik judul webtoon atau kreator..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full bg-transparent px-3 py-2 text-sm sm:text-base text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none"
+              autoFocus={!initialQ}
+            />
+
+            {query && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors mr-1"
+                aria-label="Bersihkan pencarian"
+              >
+                <X size={16} />
+              </button>
+            )}
+
+            <button
+              type="submit"
+              className="px-5 py-2.5 rounded-xl bg-[#6659F5] hover:bg-[#5547E8] text-white font-medium text-xs sm:text-sm shadow-xs transition-colors shrink-0"
+            >
+              Cari
+            </button>
+          </div>
+        </form>
       </div>
 
+      {/* FILTER TABS & COUNT (WHEN SEARCHED) */}
+      {results && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
+          <div className="text-sm text-[var(--text-secondary)]">
+            Ditemukan{' '}
+            <span className="font-bold text-[var(--text-primary)]">
+              {displayedItems.length}
+            </span>{' '}
+            judul untuk &ldquo;{results.query}&rdquo;
+          </div>
+
+          <div className="flex items-center gap-1.5 bg-[var(--bg-surface)] p-1 rounded-xl border border-[var(--border-color)] self-start sm:self-auto">
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                activeTab === 'all'
+                  ? 'bg-[#6659F5] text-white dark:bg-[#9188FF] dark:text-[#101221]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              Semua ({results.items?.length || 0})
+            </button>
+
+            <button
+              onClick={() => setActiveTab('originals')}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                activeTab === 'originals'
+                  ? 'bg-[#6659F5] text-white dark:bg-[#9188FF] dark:text-[#101221]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              Originals ({results.originals?.length || 0})
+            </button>
+
+            <button
+              onClick={() => setActiveTab('canvas')}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                activeTab === 'canvas'
+                  ? 'bg-[#6659F5] text-white dark:bg-[#9188FF] dark:text-[#101221]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              Canvas ({results.canvas?.length || 0})
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* RESULTS DISPLAY */}
       {loading ? (
-        <div className="flex flex-col gap-4">
-          {[1,2,3,4].map(i => (
-            <div key={i} className="h-32 bg-neutral-900 border-2 border-neutral-700 animate-pulse"></div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex flex-col rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] overflow-hidden animate-pulse"
+            >
+              <div className="aspect-[3/4] bg-[var(--bg-elevated)]" />
+              <div className="p-3.5 flex flex-col gap-2">
+                <div className="h-4 w-3/4 bg-[var(--bg-elevated)] rounded" />
+                <div className="h-3 w-1/2 bg-[var(--bg-elevated)] rounded" />
+              </div>
+            </div>
           ))}
         </div>
+      ) : error ? (
+        <div className="p-8 sm:p-12 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-center flex flex-col items-center justify-center gap-3">
+          <AlertCircle size={32} className="text-[#6659F5] dark:text-[#9188FF]" />
+          <h3 className="text-base font-semibold text-[var(--text-primary)]">{error}</h3>
+          <button
+            onClick={() => fetchResults(query)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#6659F5] text-white text-xs font-medium hover:bg-[#5547E8] transition-colors"
+          >
+            <RefreshCw size={14} />
+            <span>Coba Lagi</span>
+          </button>
+        </div>
+      ) : results && displayedItems.length === 0 ? (
+        <div className="p-8 sm:p-12 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-center flex flex-col items-center justify-center gap-3">
+          <h3 className="text-base font-semibold text-[var(--text-primary)]">
+            Tidak ada judul yang cocok
+          </h3>
+          <p className="text-xs text-[var(--text-secondary)] max-w-sm">
+            Kami tidak menemukan hasil untuk &ldquo;{query}&rdquo;. Silakan coba dengan kata kunci lain atau pilih saran populer di bawah.
+          </p>
+          <button
+            onClick={handleClear}
+            className="px-4 py-2 rounded-full bg-[var(--bg-elevated)] hover:bg-[#6659F5] hover:text-white text-xs font-medium transition-colors"
+          >
+            Hapus Pencarian
+          </button>
+        </div>
       ) : results ? (
-        <div className="flex flex-col gap-8">
-          <div className="font-mono font-bold border-b-2 border-white pb-2 flex justify-between uppercase">
-            <span>RESULTS FOR "{results.query}"</span>
-            <span className="bg-white text-black px-2">{results.count} FOUND</span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
+          {displayedItems.map((item: any, idx: number) => (
+            <SeriesCard
+              key={`${item.titleNo}-${idx}`}
+              title={item.title}
+              url={item.url}
+              thumbnail={item.thumbnail}
+              author={item.author}
+              genre={item.genre}
+              section={item.section}
+              isPriority={idx < 4}
+            />
+          ))}
+        </div>
+      ) : (
+        /* IDLE STATE: SUGGESTIONS */
+        <div className="flex flex-col gap-6 py-4">
+          <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+            <Sparkles size={16} className="text-[#6659F5] dark:text-[#9188FF]" />
+            <span>Pencarian Populer Rekomendasi</span>
           </div>
-          
-          {results.items?.length === 0 && (
-            <div className="p-8 text-center border-4 border-dashed border-gray-700 text-gray-500 font-mono">
-              [EMPTY_SET]
-            </div>
-          )}
 
-          <div className="flex flex-col gap-4">
-            {results.items?.map((item: any, idx: number) => (
-              <Link 
-                key={idx}
-                href={`/detail?url=${encodeURIComponent(item.url)}`}
-                className="flex gap-4 border-4 border-neutral-800 bg-black hover:border-[var(--color-brand-blue)] transition-colors group p-2"
+          <div className="flex flex-wrap gap-2">
+            {SUGGESTED_SEARCHES.map((term) => (
+              <button
+                key={term}
+                onClick={() => {
+                  setQuery(term);
+                  router.push(`/search?q=${encodeURIComponent(term)}`);
+                  fetchResults(term);
+                }}
+                className="px-4 py-2 rounded-xl bg-[var(--bg-surface)] hover:bg-[#EEECFF] dark:hover:bg-[#1E233E] text-[var(--text-secondary)] hover:text-[#6659F5] dark:hover:text-[#9188FF] border border-[var(--border-color)] hover:border-[#C5BEFF] text-xs font-medium transition-all"
               >
-                <div className="w-24 md:w-32 aspect-[3/4] bg-neutral-900 relative border-2 border-neutral-700 shrink-0">
-                  {item.thumbnail && (
-                    <Image 
-                      src={`/api/image-proxy?url=${encodeURIComponent(item.thumbnail)}`} 
-                      alt={item.title} 
-                      fill
-                      unoptimized
-                      className="object-cover grayscale group-hover:grayscale-0"
-                    />
-                  )}
-                </div>
-                <div className="flex flex-col py-2 flex-1">
-                  <h3 className="text-xl md:text-2xl font-black uppercase leading-none mb-2 group-hover:text-[var(--color-brand-blue)]">{item.title}</h3>
-                  <p className="font-mono text-xs md:text-sm text-gray-400 mb-2 uppercase">{item.author || "UNKNOWN_AUTHOR"}</p>
-                  <div className="mt-auto flex gap-2">
-                    <span className="text-[10px] md:text-xs font-mono bg-white text-black px-2 py-1 uppercase">{item.section}</span>
-                    {item.genre && (
-                      <span className="text-[10px] md:text-xs font-mono border border-white px-2 py-1 uppercase">{item.genre}</span>
-                    )}
-                  </div>
-                </div>
-              </Link>
+                {term}
+              </button>
             ))}
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
 
 export default function SearchPage() {
   return (
-    <div className="min-h-screen flex flex-col pb-20 md:pb-0">
-      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-sm border-b-4 border-white p-4 flex items-center gap-4">
-        <Link href="/" className="p-2 border-2 border-white hover:bg-white hover:text-black transition-colors">
-          <ArrowLeft size={24} />
-        </Link>
-        <h1 className="text-2xl font-black tracking-tighter uppercase">SEARCH_DATA</h1>
-      </header>
-      <main className="flex-1 max-w-4xl w-full mx-auto p-4">
-        <Suspense fallback={<div className="p-8 text-center font-mono animate-pulse">[LOADING_SYS]</div>}>
+    <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors pb-16 md:pb-0">
+      <Navbar />
+
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <Suspense
+          fallback={
+            <div className="flex flex-col gap-4 animate-pulse">
+              <div className="h-10 w-48 bg-[var(--bg-surface)] rounded-xl" />
+              <div className="h-12 w-full bg-[var(--bg-surface)] rounded-2xl" />
+            </div>
+          }
+        >
           <SearchContent />
         </Suspense>
       </main>
-      {/* MOBILE NAV */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-black border-t-4 border-white flex z-50 h-14">
-        <Link href="/" className="flex-1 flex flex-col items-center justify-center hover:bg-[var(--accent)] hover:text-black transition-colors border-r-2 border-white">
-          <span className="font-bold text-sm uppercase tracking-widest">Home</span>
-        </Link>
-        <Link href="/search" className="flex-1 flex flex-col items-center justify-center bg-[var(--color-brand-blue)] text-black transition-colors border-l-2 border-white">
-          <span className="font-bold text-sm uppercase tracking-widest">Search</span>
-        </Link>
-      </nav>
+
+      <Footer />
+      <MobileNav />
     </div>
   );
 }

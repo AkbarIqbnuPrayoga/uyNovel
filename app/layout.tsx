@@ -1,30 +1,42 @@
 import type { Metadata, Viewport } from 'next';
-import { Space_Grotesk, JetBrains_Mono } from 'next/font/google';
+import { Plus_Jakarta_Sans, Manrope, Literata } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/components/theme/ThemeProvider';
 
-const spaceGrotesk = Space_Grotesk({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-space',
+  variable: '--font-jakarta',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const manrope = Manrope({
   subsets: ['latin'],
-  variable: '--font-mono',
+  variable: '--font-manrope',
+  display: 'swap',
+  weight: ['500', '600', '700', '800'],
+});
+
+const literata = Literata({
+  subsets: ['latin'],
+  variable: '--font-literata',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
-  title: 'UYNovel - Brutalist Webtoon Reader',
-  description: 'Baca webtoon trending dari sumber aslinya dengan UI brutalist yang estetik.',
+  title: 'UYNovel — Modern Minimalist Novel & Webtoon Platform',
+  description: 'Temukan dan baca webtoon, manga, dan novel dengan pengalaman membaca digital modern, estetik, dan nyaman.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'black-translucent',
+    statusBarStyle: 'default',
     title: 'UYNovel',
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#000000',
+  themeColor: '#101221',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -32,12 +44,18 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} dark`}>
+    <html 
+      lang="id" 
+      className={`${plusJakarta.variable} ${manrope.variable} ${literata.variable} dark`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="apple-touch-icon" href="/icon.png" />
       </head>
-      <body className="bg-black text-white font-space selection:bg-[var(--accent)] selection:text-black antialiased">
-        {children}
+      <body className="antialiased selection:bg-[#6659F5]/20 selection:text-[#6659F5] dark:selection:bg-[#9188FF]/30 dark:selection:text-[#C5BEFF]">
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `
