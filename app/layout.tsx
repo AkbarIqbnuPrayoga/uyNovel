@@ -25,7 +25,7 @@ const literata = Literata({
 });
 
 export const metadata: Metadata = {
-  title: 'UYNovel — Modern Minimalist Novel & Webtoon Platform',
+  title: 'UYNovel — Platform Baca Webtoon, Manga, dan Novel',
   description: 'Temukan dan baca webtoon, manga, dan novel dengan pengalaman membaca digital modern, estetik, dan nyaman.',
   manifest: '/manifest.json',
   appleWebApp: {
