@@ -76,11 +76,6 @@ export function SeriesCard({
       {/* METADATA CONTENT */}
       <div className="p-3.5 flex flex-col flex-1 justify-between gap-1.5 bg-[var(--bg-surface)]">
         <div>
-          {genre && (
-            <span className="text-[11px] font-semibold text-[#6659F5] dark:text-[#9188FF] line-clamp-1">
-              {genre}
-            </span>
-          )}
           <h3 className="font-semibold text-sm sm:text-base text-[#1F2238] dark:text-[#F5F6FF] group-hover:text-[#6659F5] dark:group-hover:text-[#9188FF] transition-colors line-clamp-2 leading-snug">
             {title}
           </h3>

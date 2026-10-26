@@ -42,6 +42,15 @@ const titleNoFromUrl = (url: string) => {
   return m ? Number(m[1]) : null;
 };
 
+const titleSlugFromUrl = (url: string): string => {
+  const m = String(url).match(/\/id\/[^/]+\/([^/]+)\/list/);
+  if (!m || !m[1] || m[1] === "canvas") return "";
+  return m[1]
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 export const searchWebtoons = async (query: string, limit: number = 20) => {
   const html = await fetchHtml(`/id/search?keyword=${encodeURIComponent(query)}`);
   const $ = cheerio.load(html);
@@ -57,7 +66,9 @@ export const searchWebtoons = async (query: string, limit: number = 20) => {
     if (!titleNo) return;
     const title =
       $a.find("strong.title, .info_text .title, p.subj, .subj").first().text().trim() ||
-      $a.attr("title")?.trim() || "";
+      $a.attr("title")?.trim() ||
+      titleSlugFromUrl(absUrl) ||
+      "";
     const author =
       $a.find(".info_text .author, div.author, .author, .by").first().text().trim();
     const thumb = normalizeImageUrl($a.find("img").first().attr("src") ?? null);
@@ -88,9 +99,11 @@ export const searchWebtoons = async (query: string, limit: number = 20) => {
 };
 
 export const parseDetail = ($: cheerio.CheerioAPI, sourceUrl: string) => {
-  const title = $("h1.subj, h3.subj, .info .subj").first().text().trim() ||
-    $('meta[property="og:title"]').attr("content") || null;
-  const author = $(".author_area, .ly_creator_in .author, .author").first().text().trim() || null;
+  const title = $("h1.subj, h3.subj, .info .subj, .subj, strong.title").first().text().trim() ||
+    $('meta[property="og:title"]').attr("content") ||
+    titleSlugFromUrl(sourceUrl) ||
+    null;
+  const author = $(".author_area .author, .ly_creator_in .author, .author_area, .author").first().text().replace(/\s+/g, " ").replace(/Informasi Kreator.*$/i, "").trim() || null;
   const synopsis = $("p.summary, .detail_body .summary").first().text().trim() ||
     $('meta[property="og:description"]').attr("content") || null;
   const genre = $("h2.genre, p.genre").first().text().trim() || null;
@@ -161,7 +174,7 @@ export const getTrending = async (day: string) => {
   const d = (day || "daily").toLowerCase();
   const path = d === "daily" || d === "trending"
     ? "/id/dailySchedule"
-    : d === "completed" ? "/id/originals/completed" : `/id/originals/${d}`;
+    : d === "completed" || d === "complete" ? "/id/originals/complete" : `/id/originals/${d}`;
   const sourceUrl = `${WEBTOONS_BASE}${path}`;
   const html = await fetchHtml(sourceUrl);
   const $ = cheerio.load(html);
@@ -174,12 +187,16 @@ export const getTrending = async (day: string) => {
     const absUrl = href.startsWith("http") ? href : `${WEBTOONS_BASE}${href}`;
     const titleNo = titleNoFromUrl(absUrl);
     if (!titleNo) return;
-    const title = $a.find(".subj, p.subj").first().text().trim() || $a.attr("title")?.trim() || "";
+    const title =
+      $a.find("strong.title, .info_text .title, .subj, p.subj").first().text().trim() ||
+      $a.attr("title")?.trim() ||
+      titleSlugFromUrl(absUrl) ||
+      "";
     const rawThumb = $a.find("img").first().attr("src") ?? null;
     const thumb = normalizeImageUrl(rawThumb);
     const genreMatch = absUrl.match(/\/id\/([^/]+)\/[^/]+\/list/);
     const genre = genreMatch && genreMatch[1] !== "canvas" ? genreMatch[1] : null;
-    const likes = $a.find(".grade_area em, .like_area em, .grade_num").first().text().trim() || null;
+    const likes = $a.find(".view_count, .grade_area em, .like_area em, .grade_num").first().text().trim() || null;
     items.push({
       titleNo, title, thumbnail: thumb, genre, likes,
       url: absUrl.split("&webtoon-platform-redirect")[0],

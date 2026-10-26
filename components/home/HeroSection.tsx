@@ -83,12 +83,7 @@ export function HeroSection({ featuredItem }: HeroSectionProps) {
               </div>
 
               <div className="pt-3 px-1 flex flex-col gap-1">
-                {featuredItem.genre && (
-                  <span className="text-xs font-semibold text-[#6659F5] dark:text-[#9188FF]">
-                    {featuredItem.genre}
-                  </span>
-                )}
-                <h3 className="font-bold text-base text-[#1F2238] dark:text-[#F5F6FF] group-hover:text-[#6659F5] dark:group-hover:text-[#9188FF] transition-colors line-clamp-1">
+                <h3 className="font-bold text-base text-[#1F2238] dark:text-[#F5F6FF] group-hover:text-[#6659F5] dark:group-hover:text-[#9188FF] transition-colors line-clamp-2">
                   {featuredItem.title}
                 </h3>
                 <div className="flex items-center justify-between text-xs text-[#565D75] dark:text-[#B1B7CD] pt-1">
