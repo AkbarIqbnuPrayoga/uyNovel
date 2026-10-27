@@ -248,6 +248,25 @@ export function Navbar() {
                 </Link>
               );
             })}
+
+            {/* PWA INSTALL BUTTON FOR MOBILE */}
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                window.dispatchEvent(new CustomEvent('uynovel-open-install-prompt'));
+              }}
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-[#EEECFF] dark:bg-[#1E233E] text-[#6659F5] dark:text-[#9188FF] hover:opacity-90 transition-opacity mt-1 cursor-pointer"
+            >
+              <div className="w-5 h-5 rounded-md bg-[#6659F5] text-white flex items-center justify-center shrink-0">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </div>
+              <span>Pasang Aplikasi (PWA)</span>
+            </button>
           </div>
 
           <div className="pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-xs text-[#8E96AC] dark:text-[#7A829D]">

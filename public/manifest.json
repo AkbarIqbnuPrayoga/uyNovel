@@ -1,21 +1,77 @@
 {
-  "name": "UYNovel",
+  "id": "/?source=pwa",
+  "name": "UYNovel — Platform Baca Webtoon & Novel",
   "short_name": "UYNovel",
-  "description": "Modern Minimalist Novel & Webtoon Discovery and Reading Platform",
-  "start_url": "/",
+  "description": "Platform digital modern dan estetik untuk menemukan dan membaca webtoon, komik, dan novel secara nyaman.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
   "background_color": "#101221",
   "theme_color": "#101221",
+  "lang": "id-ID",
+  "dir": "ltr",
+  "categories": ["books", "entertainment", "comics", "lifestyle"],
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/icon.png",
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Jelajahi Cerita",
+      "short_name": "Jelajah",
+      "description": "Cari webtoon, komik, dan manga favorit",
+      "url": "/search",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Trending Terkini",
+      "short_name": "Trending",
+      "description": "Lihat judul webtoon yang sedang viral dan populer",
+      "url": "/#trending",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }

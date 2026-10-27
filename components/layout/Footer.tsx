@@ -55,6 +55,18 @@ export function Footer() {
                   Lanjutkan Membaca
                 </Link>
               </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('uynovel-open-install-prompt'))}
+                  className="hover:text-[#6659F5] dark:hover:text-[#9188FF] transition-colors cursor-pointer text-left flex items-center gap-1.5"
+                >
+                  <span>Pasang Aplikasi (PWA)</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#6659F5]/10 text-[#6659F5] dark:text-[#9188FF]">
+                    HP & Desktop
+                  </span>
+                </button>
+              </li>
             </ul>
           </div>
 
